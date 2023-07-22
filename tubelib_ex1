@@ -1,0 +1,16 @@
+include <tubelib.scad>;
+
+// Specify your path here
+angle=180.;
+function p_t( t ) =    5.*[ cos( angle*t ), sin( angle*t ), t^6 ];
+function dp_dt( t ) =  ( p_t( t+eps ) - p_t( t-eps ) )/ (2.*eps); 
+
+profile =  [ for( j = linspace( 0, 1, 32 ) ) 
+             [ cos(360.*j), max(-.71,min(0.71,sin(360.*j))), 0. ] ];
+intervals = linspace( 0, 1, 64 );
+path =     [ for(t=intervals) p_t( t ) ];
+dpath_t =  [ for(t=intervals) dp_dt( t ) ];
+scale =    [ for(t=intervals) 1 + 0.5*cos( 360.*t ) ];     
+rotation = [ for(t=intervals) 90.*t^4 ];   
+
+tubular( intervals, profile, path, dpath_t, scale, rotation );
